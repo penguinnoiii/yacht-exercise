@@ -29,7 +29,7 @@ export const score = (dices, category) => {
   function sumOfANormalCategory(setOfNumber, category) {
     const occurenceOfNumber = frequencyOfTheNumber(setOfNumber)
     const sum = category * occurenceOfNumber[category]
-    if (sum === NaN) {
+    if (isNaN(sum) || sum === 0) {
       console.log(0);
       return 0
     } else {
@@ -42,21 +42,36 @@ export const score = (dices, category) => {
   function sumOfSpecialCategory(setOfNumber, category) {
     if (category === "full house") {
       const occurenceOfNumber = frequencyOfTheNumber(setOfNumber)
-      const filteredNumber = Object.keys(occurenceOfNumber).filter((key) => occurenceOfNumber[key] === 2 || occurenceOfNumber[key] === 3)
+      const filteredNumber = Object.keys(occurenceOfNumber).filter((key) => occurenceOfNumber[key] === 2 || occurenceOfNumber[key] === 3)      
       let sum = 0
-      for (let num of filteredNumber) {
-        sum = sum + (num * occurenceOfNumber[num])
+      let hasTwo = false
+      let hasThree = false
+      for (let findThree of filteredNumber) {
+        if (occurenceOfNumber[findThree] === 3) {
+          hasThree = true
+        } else if (occurenceOfNumber[findThree] === 2) {
+          hasTwo = true
+        }
       }
-      console.log(sum);
-      return sum
+      
+      if (hasThree && hasTwo && filteredNumber.length === 2) {
+        for (let num of filteredNumber) {
+          sum = sum + (num * occurenceOfNumber[num])
+        }
+        console.log(sum);
+        return sum
+      } else {
+        console.log(0);
+        return 0
+      }
     }
 
     if (category === "four of a kind") {
       const occurenceOfNumber = frequencyOfTheNumber(setOfNumber)
       const filteredNumber = Object.keys(occurenceOfNumber).filter((key) => occurenceOfNumber[key] >= 4)
       let sum = 0
-      for (let num of filteredNumber) {
-        sum = sum + (num * occurenceOfNumber[num])
+      if (true) {
+        sum = filteredNumber * 4
       }
       console.log(sum);
       return sum
@@ -64,21 +79,23 @@ export const score = (dices, category) => {
 
     if (category === "yacht") {
       const occurenceOfNumber = frequencyOfTheNumber(setOfNumber)
-      const filteredNumber = Object.keys(occurenceOfNumber).filter((key) => occurenceOfNumber[key] = 5)
-      let sum = 0
-      for (let num of filteredNumber) {
-        sum = sum + (num * occurenceOfNumber[num])
+      const filteredNumber = Object.keys(occurenceOfNumber).filter((key) => occurenceOfNumber[key] === 5)
+      if (occurenceOfNumber[filteredNumber] === 5) {
+        console.log(50);
+        return 50
+      } else {
+        console.log(0)
+        return 0
       }
-      console.log(sum);
-      return sum
     }
   }
 
   function sumOfSpecificCategory(setOfNumber, category) {
     if (category === "little straight") {
-      const number = JSON.stringify(setOfNumber)
-      const availableNumber = JSON.stringify([1, 2, 3, 4, 5])      
-      if (number === availableNumber)  {
+      const sortedNumber = setOfNumber.sort((a, b) => a - b)
+      const number = JSON.stringify(sortedNumber)
+      const availableNumber = JSON.stringify([1, 2, 3, 4, 5])
+      if (number.includes(availableNumber)) {
         console.log(30);
         return 30
       } else {
@@ -88,9 +105,10 @@ export const score = (dices, category) => {
     }
 
     if (category === "big straight") {
-      const number = JSON.stringify(setOfNumber)
+      const sortedNumber = setOfNumber.sort((a, b) => a - b)
+      const number = JSON.stringify(sortedNumber)
       const availableNumber = JSON.stringify([2, 3, 4, 5, 6])      
-      if (number === availableNumber)  {
+      if (number.includes(availableNumber))  {
         console.log(30);
         return 30
       } else {
@@ -113,14 +131,14 @@ export const score = (dices, category) => {
   const special = ["full house", "four of a kind", "yacht"]
   const specific = ["little straight", "big straight", "choice"]
   if (normal.includes(category)) {
-    sumOfANormalCategory(dices, normalCategory[category])
+    return sumOfANormalCategory(dices, normalCategory[category])
   } else if (special.includes(category)) {
-    sumOfSpecialCategory(dices, category)
+    return sumOfSpecialCategory(dices, category)
   } else if (specific.includes(category)) {
-    sumOfSpecificCategory(dices, category)
+    return sumOfSpecificCategory(dices, category)
   } else {
     throw new Error("Cannot Found")
   }
 };
 
-score([2, 3, 4, 5, 6], "Big straight")
+score([5, 3, 3, 5, 3], "full house")
